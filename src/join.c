@@ -119,8 +119,9 @@ int indexedStrategy(Car* c, CarHeader *ch, int carN, FILE* carFile, Line *l, Lin
         return -1;
 
     Index* idx = openIndex(indexFile);
-    int nFound = 0;
     Register* reg = createRegister(0, 0);
+
+    int nFound = 0;
     for (int i = 0; i < carN; i++) {
         readCar(c, carFile, BIN, NO_OFFSET);
         if (searchRegister(idx, getCarCodLinha(c), &reg) == FOUND) {
@@ -132,8 +133,6 @@ int indexedStrategy(Car* c, CarHeader *ch, int carN, FILE* carFile, Line *l, Lin
             }
         }
     }
-
-    freeRegister(reg);
     closeIndex(idx);
     return nFound;
 }
