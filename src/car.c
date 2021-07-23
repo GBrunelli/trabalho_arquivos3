@@ -1,8 +1,6 @@
 #include "car.h"
 #include "utils.h"
 
-#define STRUCT_CAR_HEADER_SIZE 175
-#define STRUCT_BASE_CAR_SIZE 31
 
 struct _CarHeader
 {
@@ -46,7 +44,12 @@ struct _Car
 
 int getCarNRegisters(CarHeader *ch)
 {
-    return ch->nroRegistros + ch->nroRegistrosRemovidos;
+    return ch->nroRegistros;
+}
+
+int getCarNRemovedRegisters(CarHeader *ch)
+{
+    return ch->nroRegistrosRemovidos;
 }
 
 CarHeader *newCarHeader()
@@ -54,6 +57,12 @@ CarHeader *newCarHeader()
     CarHeader *carHeader = calloc(1, sizeof(CarHeader));
     carHeader->byteProxReg = STRUCT_CAR_HEADER_SIZE;
     return carHeader;
+}
+
+void updateCarHeaderRegisterData(CarHeader *ch, int64_t byteProxReg, int32_t nroRegistros, int32_t nroRegistrosRemovidos) {
+    ch->byteProxReg = byteProxReg;
+    ch->nroRegistros = nroRegistros;
+    ch->nroRegistrosRemovidos = nroRegistrosRemovidos;
 }
 
 // Generates a CarHeader from a valid binary file.

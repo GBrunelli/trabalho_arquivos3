@@ -38,6 +38,12 @@ typedef enum _FuncStatus
     LOGICALLY_REMOVED
 } FuncStatus;
 
+// Logic for opening both files used on most routines
+void openFiles(FILE **carBin, char *carFileName, char* carOpenOptions, FILE **lineBin, char *lineFileName, char* lineOpenOptions);
+
+// Logic for opening the indexFile, used on the indexed join strategy
+int openIndexFile(char* indexFileName, FILE** indexFile);
+
 // Get the month, given its number
 // e.g. 1 = January, 12 = December...
 void getMonthName(char *monthName, int month);
@@ -45,10 +51,6 @@ void getMonthName(char *monthName, int month);
 // Transform a date of format "YYYY-MM-DD" to "_DAY de _MONTH_NAME_ de _YEAR_".
 // Example: "2010-05-21" -> "21 de maio de 2021".
 void tranformDate(char *date);
-
-// Function used on all routines. Opens both the binary data file and the index file.
-// Also checks the integrity of each file. Gives an error if one or both has status == '0'
-void openFiles(FILE **bin, char *binFileName, char *binMode, FILE **index, char *indexFileName, char *indexMode, bool (*integrityChecker)(FILE *));
 
 // Remove "Quotation Marks" from a string.
 void removeQuotations(char *str);

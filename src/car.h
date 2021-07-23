@@ -8,10 +8,16 @@ typedef struct _CarHeader CarHeader;
 
 typedef struct _Car Car;
 
+#define STRUCT_CAR_HEADER_SIZE 175
+#define STRUCT_BASE_CAR_SIZE 31
+
 /* ## Functions to deal with Car headers ## */
 
-// Gets the sum of active and removed register in the bin file
+// Gets the total amouint of active registers in the bin file
 int getCarNRegisters(CarHeader *ch);
+
+// Gets the total amouint of removed registers in the bin file
+int getCarNRemovedRegisters(CarHeader *ch);
 
 // Returns codLinha from current car
 int getCarCodLinha(Car* c);
@@ -19,6 +25,9 @@ int getCarCodLinha(Car* c);
 
 // Alocates memory and initializes the struct CarHeader
 CarHeader *newCarHeader();
+
+// Updates all CarHeader information related to Register numbers and offsets
+void updateCarHeaderRegisterData(CarHeader *ch, int64_t byteProxReg, int32_t nroRegistros, int32_t nroRegistrosRemovidos);
 
 // Get all Header information from a specific source file.
 // Currently supported sources: BIN, CSV

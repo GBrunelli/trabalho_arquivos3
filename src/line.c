@@ -1,8 +1,6 @@
 #include "line.h"
 #include "utils.h"
 
-// Offset to pass through header
-#define LINE_HEADER_OFFSET 82
 // Base offset for each line
 #define LINE_OFFSET 13
 
@@ -148,6 +146,13 @@ void overwriteLineHeader(LineHeader *lh, FILE *file, Source source)
     default:
         break;
     }
+}
+
+void updateLineHeaderRegisterData(LineHeader *lh, int64_t byteProxReg, int32_t nroRegistros, int32_t nroRegistrosRemovidos)
+{
+    lh->byteProxReg = byteProxReg;
+    lh->nroRegistros = nroRegistros;
+    lh->nroRegistrosRemovidos = nroRegistrosRemovidos;
 }
 
 void setLineFileStatus(FILE *file, char c)

@@ -1,73 +1,20 @@
 #include "join.h"
 #include "b_tree.h"
-
-
-void _openFiles(FILE **carBin, char *carFileName, FILE **lineBin, char *lineFileName)
-{
-    *carBin = fopen(carFileName, "rb");
-    if (*carBin == NULL)
-    {
-        printf("Falha no processamento do arquivo.\n");
-        exit(0);
-    }
-
-    *lineBin = fopen(lineFileName, "rb");
-    if (*index == NULL)
-    {
-        fclose(*carBin);
-        printf("Falha no processamento do arquivo.\n");
-        exit(0);
-    }
-
-    // Checking integrity of each file
-    char ic1 = '0', ic2 = '0';
-    fread(&ic1, 1, 1, *lineBin);
-    fread(&ic2, 1, 1, *carBin);
-    if (ic1 == '0' || ic2 == '0')
-    {
-        printf("Falha no processamento do arquivo.\n");
-        fclose(*carBin);
-        fclose(*lineBin);
-        exit(0);
-    }
-
-    fseek(*lineBin, 0, SEEK_SET);
-    fseek(*carBin, 0, SEEK_SET);
-}
-
-int _openIndexFile(char* indexFileName, FILE** indexFile) {
-    *indexFile = fopen(indexFileName, "rb");
-    if (*indexFile == NULL) {
-        printf("Falha no processamento do arquivo.\n");
-        return 0;
-    }
-
-    // Checking whether file is valid
-    char c = '0';
-    fread(&c, 1, 1, *indexFile);
-    if (c == '0') {
-        printf("Falha no processamento do arquivo.\n");
-        fclose(*indexFile); 
-        return 0;
-    }
-
-    fseek(*indexFile, 0, SEEK_SET);
-    return 1;
-}
+#include "utils.h"
 
 void baseJoin(int (*joinStrategy)(Car* c, CarHeader *ch, int carN, FILE* carFile, Line *l, LineHeader *lh, int lineN, FILE* lineFile)) {
     // Opening files
     char carFileName[MAX_STRING_SIZE], lineFileName[MAX_STRING_SIZE];
     scanf("%s %s", carFileName, lineFileName);
     FILE *carFile = NULL, *lineFile = NULL;
-    _openFiles(&carFile, carFileName, &lineFile, lineFileName);
+    openFiles(&carFile, carFileName, "rb", &lineFile, lineFileName, "rb");
 
     // Checking total amount of cars and lines
     LineHeader *lh = newLineHeader();
     CarHeader *ch = newCarHeader();
     updateLineHeader(lh, lineFile, BIN);
     getCarHeader(ch, carFile, BIN);
-    int carN = getCarNRegisters(ch);
+    int carN = getCarNRegisters(ch) + getCarNRemovedRegisters(ch);
     int lineN = getNRegisters(lh) + getNRemovedRegisters(lh);
 
 
@@ -115,7 +62,7 @@ int indexedStrategy(Car* c, CarHeader *ch, int carN, FILE* carFile, Line *l, Lin
     char indexFileName[MAX_STRING_SIZE];
     scanf("%*s %*s %s", indexFileName);
     FILE* indexFile = NULL;
-    if (!_openIndexFile(indexFileName, &indexFile))
+    if (!openIndexFile(indexFileName, &indexFile))
         return -1;
 
     Index* idx = openIndex(indexFile);

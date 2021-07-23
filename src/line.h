@@ -8,6 +8,10 @@ typedef struct _LineHeader LineHeader;
 
 typedef struct _Line Line;
 
+
+// Offset to pass through header
+#define LINE_HEADER_OFFSET 82
+
 /* ## Functions to deal with line headers ## */
 
 // Create a new line header
@@ -16,6 +20,9 @@ LineHeader *newLineHeader();
 // Get all Header information from a specific source file.
 // Currently supported sources: BIN, CSV
 void updateLineHeader(LineHeader *lh, FILE *file, Source from);
+
+// Update data associated with registes inside LineHeader
+void updateLineHeaderRegisterData(LineHeader *ch, int64_t byteProxReg, int32_t nroRegistros, int32_t nroRegistrosRemovidos);
 
 // Check if a binary line file is corrupted
 bool checkLineFileIntegrity(FILE *bin);

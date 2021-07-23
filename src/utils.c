@@ -1,6 +1,61 @@
 #include "project.h"
 #include "utils.h"
 
+// Logic for opening and verifying both binary files used for each routine
+void openFiles(FILE **bin1, char *bin1Name, char* bin1Optios, FILE **bin2, char *bin2Name, char* bin2Options)
+{
+    *bin1 = fopen(bin1Name, bin1Optios);
+    if (*bin1 == NULL)
+    {
+        printf("Falha no processamento do arquivo.\n");
+        exit(0);
+    }
+
+    *bin2 = fopen(bin2Name, bin2Options);
+    if (*index == NULL)
+    {
+        fclose(*bin1);
+        printf("Falha no processamento do arquivo.\n");
+        exit(0);
+    }
+
+    // Checking integrity of each file
+    char ic1 = '0', ic2 = '0';
+    fread(&ic1, 1, 1, *bin1);
+    fread(&ic2, 1, 1, *bin2);
+    if (ic1 == '0' || (ic2 == '0' && (strcmp(bin2Options, "w+b") != 0)))
+    {
+        printf("Falha no processamento do arquivo.\n");
+        fclose(*bin1);
+        fclose(*bin2);
+        exit(0);
+    }
+
+    fseek(*bin2, 0, SEEK_SET);
+    fseek(*bin1, 0, SEEK_SET);
+}
+
+// Logc for opening the index file. Used on indexed join strategy
+int openIndexFile(char* indexFileName, FILE** indexFile) {
+    *indexFile = fopen(indexFileName, "rb");
+    if (*indexFile == NULL) {
+        printf("Falha no processamento do arquivo.\n");
+        return 0;
+    }
+
+    // Checking whether file is valid
+    char c = '0';
+    fread(&c, 1, 1, *indexFile);
+    if (c == '0') {
+        printf("Falha no processamento do arquivo.\n");
+        fclose(*indexFile); 
+        return 0;
+    }
+
+    fseek(*indexFile, 0, SEEK_SET);
+    return 1;
+}
+
 // Get the month member given its number
 void getMonthName(char *monthName, int month)
 {
