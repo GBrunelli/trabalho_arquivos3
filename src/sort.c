@@ -7,6 +7,7 @@ int _compareCars(const void *c1, const void *c2) {
     Car* elem1 = *(Car**)c1;    
     Car* elem2 = *(Car**)c2;
     int res = getCarCodLinha(elem1) - getCarCodLinha(elem2);
+    printf("elem1: %d - elem2: %d = %d\n", getCarCodLinha(elem1), getCarCodLinha(elem2), res);
     return res;
 }
 
@@ -37,14 +38,13 @@ void sortCars(void) {
         cars[carsRead] = newCar();
         readCar(cars[carsRead], carUnsortedFile, BIN, NO_OFFSET);
 
-        if (carLogicallyRemoved(cars[carsRead])) 
+        if (!carLogicallyRemoved(cars[carsRead]))
+            carsRead++;
+        else
             freeCar(cars[carsRead]);
-        else 
-            carsRead++;        
     }
     fclose(carUnsortedFile);
 
-    
     // Sorting cars array
     qsort(cars, carN, sizeof(Car *), _compareCars);
 
@@ -55,8 +55,9 @@ void sortCars(void) {
     setCarFileStatus(carSortedFile, '0');
 
     // Writing sorted data into sortedFile
-    for (int i = 0; i < carN; i++)
+    for (int i = 0; i < carN; i++) {
         writeCar(cars[i], carSortedFile, BIN);
+    }
 
     // Overwriting File Header with new information then closing file
     setCarFileStatus(carSortedFile, '1');

@@ -12,7 +12,7 @@ void openFiles(FILE **bin1, char *bin1Name, char* bin1Optios, FILE **bin2, char 
     }
 
     *bin2 = fopen(bin2Name, bin2Options);
-    if (*index == NULL)
+    if (*bin2 == NULL)
     {
         fclose(*bin1);
         printf("Falha no processamento do arquivo.\n");
