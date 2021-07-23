@@ -65,6 +65,51 @@ void updateCarHeaderRegisterData(CarHeader *ch, int64_t byteProxReg, int32_t nro
     ch->nroRegistrosRemovidos = nroRegistrosRemovidos;
 }
 
+int compareCars(const void *c1, const void *c2) {
+    Car* elem1 = *(Car**)c1;    
+    Car* elem2 = *(Car**)c2;
+    int res = getCarCodLinha(elem1) - getCarCodLinha(elem2);
+    return res;
+}
+
+Car** getCars(FILE* carUnsortedFile, CarHeader *ch) {
+    // Checking total amount of cars
+    int carN = getCarNRegisters(ch);
+
+    // Reading all cars and preparing array for sorting
+    Car **cars = calloc(carN, sizeof(Car*));
+    int carsRead = 0;
+    while (carsRead < carN) {
+        cars[carsRead] = newCar();
+        readCar(cars[carsRead], carUnsortedFile, BIN, NO_OFFSET);
+
+        if (!carLogicallyRemoved(cars[carsRead]))
+            carsRead++;
+        else
+            freeCar(cars[carsRead]);
+    }
+
+    return cars;
+}
+
+void writeCars(FILE* carSortedFile, CarHeader* ch, Car** cars) {
+    int carN = getCarNRegisters(ch);
+
+    // Reinitializing File Header for new file
+    updateCarHeaderRegisterData(ch, STRUCT_CAR_HEADER_SIZE, 0, 0);
+    writeCarHeader(ch, carSortedFile, BIN);
+    freeCarHeader(ch);
+    setCarFileStatus(carSortedFile, '0');
+
+    // Writing sorted data into sortedFile
+    for (int i = 0; i < carN; i++) {
+        writeCar(cars[i], carSortedFile, BIN);
+    }
+
+    // Overwriting File Header with new information then closing file
+    setCarFileStatus(carSortedFile, '1');
+}
+
 // Generates a CarHeader from a valid binary file.
 CarHeader *_getCarHeaderFromBin(CarHeader *carHeader, FILE *file)
 {

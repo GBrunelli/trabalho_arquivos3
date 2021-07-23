@@ -19,10 +19,10 @@ int main(void)
         baseJoin(indexedStrategy);
         break;
     case 17:
-        sortCars();
+        baseSort(carStrategy);
         break;
     case 18:
-        sortLines();
+        baseSort(lineStrategy);
         break;
     case 19:
         baseJoin(sortedStrategy);

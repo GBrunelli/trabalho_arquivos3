@@ -17,6 +17,10 @@ typedef struct _Line Line;
 // Create a new line header
 LineHeader *newLineHeader();
 
+int compareLines(const void *l1, const void *l2);
+Line** getLines(FILE* lineUnsortedFile, LineHeader *lh);
+void writeLines(FILE* lineSortedFile, LineHeader* lh, Line** lines);
+
 // Get all Header information from a specific source file.
 // Currently supported sources: BIN, CSV
 void updateLineHeader(LineHeader *lh, FILE *file, Source from);

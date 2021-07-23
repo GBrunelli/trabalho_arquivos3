@@ -310,19 +310,3 @@ void scan_quote_string(char *str)
         strcpy(str, "");
     }
 }
-
-/* ---------------- EXTRA ----------------
-
-OPCIONAL: dicas sobre scanf() e fscanf():
-
-scanf("%[^,]", string) -> lê até encontrar o caractere ',', não incluindo o mesmo na leitura.
-
-Exemplo de entrada: "Oi, esse é um exemplo."
-Nesse caso, o scanf("%[^,]") tem como resultado a string "Oi";
-
-scanf("%[^\"]", string) -> lê até encontrar o caractere '"', não incluindo o mesmo na leitura.
-scanf("%[^\n]", string) -> lê até encontrar o fim da linha, não incluindo o '\n' na leitura.
-
-scanf("%*c") --> lê um char e não guarda em nenhuma variável, como se tivesse ignorado ele
-
-*/

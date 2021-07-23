@@ -22,6 +22,9 @@ int getCarNRemovedRegisters(CarHeader *ch);
 // Returns codLinha from current car
 int getCarCodLinha(Car* c);
 
+int compareCars(const void *c1, const void *c2);
+Car** getCars(FILE* carUnsortedFile, CarHeader *ch);
+void writeCars(FILE* carSortedFile, CarHeader* ch, Car** cars);
 
 // Alocates memory and initializes the struct CarHeader
 CarHeader *newCarHeader();

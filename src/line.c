@@ -87,6 +87,51 @@ int getNRemovedRegisters(LineHeader *lh)
     return lh->nroRegistrosRemovidos;
 }
 
+int compareLines(const void *l1, const void *l2) {
+    Line* elem1 = *(Line**)l1;    
+    Line* elem2 = *(Line**)l2;
+    int res = getLineCodLinha(elem1) - getLineCodLinha(elem2);
+    return res;
+}
+
+Line** getLines(FILE* lineUnsortedFile, LineHeader *lh) {
+    // Checking total amount of lines
+    int lineN = getNRegisters(lh);
+
+    // Reading all lines and preparing array for sorting
+    Line **lines = calloc(lineN, sizeof(Line*));
+    int linesRead = 0;
+    while (linesRead < lineN) {
+        lines[linesRead] = newLine();
+        updateLine(lines[linesRead], lineUnsortedFile, BIN, NO_OFFSET);
+
+        if (lineLogicallyRemoved(lines[linesRead])) 
+            freeLine(lines[linesRead]);
+        else 
+            linesRead++;        
+    }
+
+    return lines;
+}
+
+void writeLines(FILE* lineSortedFile, LineHeader* lh, Line** lines) {
+    int lineN = getNRegisters(lh);
+
+    // Reinitializing File Header for new file
+    updateLineHeaderRegisterData(lh, LINE_HEADER_OFFSET, 0, 0);
+    overwriteLineHeader(lh, lineSortedFile, BIN);
+    freeLineHeader(lh);
+    setLineFileStatus(lineSortedFile, '0');
+
+
+    // Writing sorted data into sortedFile
+    for (int i = 0; i < lineN; i++)
+        writeLine(lines[i], lineSortedFile, BIN);
+
+    // Overwriting File Header with new information then closing file
+    setLineFileStatus(lineSortedFile, '1');
+}
+
 int getLineTotalRegisters(FILE *bin)
 {
     LineHeader *lh = newLineHeader();
