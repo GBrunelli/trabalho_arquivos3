@@ -1,0 +1,8 @@
+{
+    "files.associations": {
+        "project.h": "c",
+        "search.h": "c",
+        "queue": "c",
+        "random": "c"
+    }
+}
