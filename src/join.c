@@ -1,4 +1,5 @@
 #include "join.h"
+#include "b_tree.h"
 
 
 void _openFiles(FILE **carBin, char *carFileName, FILE **lineBin, char *lineFileName)
@@ -32,6 +33,26 @@ void _openFiles(FILE **carBin, char *carFileName, FILE **lineBin, char *lineFile
 
     fseek(*lineBin, 0, SEEK_SET);
     fseek(*carBin, 0, SEEK_SET);
+}
+
+int _openIndexFile(char* indexFileName, FILE** indexFile) {
+    *indexFile = fopen(indexFileName, "rb");
+    if (*indexFile == NULL) {
+        printf("Falha no processamento do arquivo.\n");
+        return 0;
+    }
+
+    // Checking whether file is valid
+    char c = '0';
+    fread(&c, 1, 1, *indexFile);
+    if (c == '0') {
+        printf("Falha no processamento do arquivo.\n");
+        fclose(*indexFile); 
+        return 0;
+    }
+
+    fseek(*indexFile, 0, SEEK_SET);
+    return 1;
 }
 
 void baseJoin(int (*joinStrategy)(Car* c, CarHeader *ch, int carN, FILE* carFile, Line *l, LineHeader *lh, int lineN, FILE* lineFile)) {
@@ -90,7 +111,31 @@ int nestedStrategy(Car* c, CarHeader *ch, int carN, FILE* carFile, Line *l, Line
 
 
 int indexedStrategy(Car* c, CarHeader *ch, int carN, FILE* carFile, Line *l, LineHeader *lh, int lineN, FILE* lineFile) {
-    return 1;
+    // Opening extra index file for this strategy
+    char indexFileName[MAX_STRING_SIZE];
+    scanf("%*s %*s %s", indexFileName);
+    FILE* indexFile = NULL;
+    if (!_openIndexFile(indexFileName, &indexFile))
+        return -1;
+
+    Index* idx = openIndex(indexFile);
+    int nFound = 0;
+    Register* reg = createRegister(0, 0);
+    for (int i = 0; i < carN; i++) {
+        readCar(c, carFile, BIN, NO_OFFSET);
+        if (searchRegister(idx, getCarCodLinha(c), &reg) == FOUND) {
+            updateLine(l, lineFile, BIN, getPR(reg));
+            if (!lineLogicallyRemoved(l) && !carLogicallyRemoved(c)) {
+                printCar(c, ch);
+                printLine(l, lh);
+                nFound++;
+            }
+        }
+    }
+
+    freeRegister(reg);
+    closeIndex(idx);
+    return nFound;
 }
 
 int sortedStrategy(Car* c, CarHeader *ch, int carN, FILE* carFile, Line *l, LineHeader *lh, int lineN, FILE* lineFile) {

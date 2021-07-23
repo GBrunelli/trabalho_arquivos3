@@ -120,6 +120,13 @@ Register *createRegister(int32_t C, int64_t Pr)
 }
 
 /**
+ * Retuns the Pr of an specific register
+*/
+int64_t getPR(Register *reg) {
+    return reg->Pr;
+}
+
+/**
  * Frees all data associated with an specific register
  */ 
 void freeRegister(Register *reg) {

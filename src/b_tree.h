@@ -35,6 +35,15 @@ void closeIndex(Index *index);
 Register *createRegister(int32_t C, int64_t Pr);
 
 /**
+ * Retuns the Pr of an specific register
+*/
+int64_t getPR(Register *reg);
+
+/**
+ * Frees all data associated with a specific register
+*/ 
+void freeRegister(Register *reg);
+/**
  * Searches for a key in the index file,
  * if a register is founds, returns it 
 */
