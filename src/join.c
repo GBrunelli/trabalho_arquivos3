@@ -18,7 +18,6 @@ void baseJoin(int (*joinStrategy)(Car* c, CarHeader *ch, int carN, FILE* carFile
     int carN = getCarNRegisters(ch) + getCarNRemovedRegisters(ch);
     int lineN = getNRegisters(lh) + getNRemovedRegisters(lh);
 
-
     // Initializing joining containers
     int nFound = 0;
     Line *l = newLine();
@@ -112,30 +111,59 @@ int sortedStrategy(Car* c, CarHeader *ch, int carN, FILE* carFile, Line *l, Line
     carStrategy(carFile, carFile);
     lineStrategy(lineFile, lineFile);
 
+    // Correcting amount of registers in each file
     carN -= getCarNRemovedRegisters(ch);
     lineN -= getNRemovedRegisters(lh);
-    int li = 1, ci = 1, nFound = 0;
-    int curr_l = 0, curr_c = 0;
-    readCar(c, carFile, BIN, NO_OFFSET);
-    updateLine(l, lineFile, BIN, NO_OFFSET);
-    while (li < lineN && ci < carN) {
-        curr_c = getCarCodLinha(c);
-        curr_l = getLineCodLinha(l);
 
+    // Initializing memory for each register container
+    if (lineN > 0) {
+        updateLine(l, lineFile, BIN, NO_OFFSET);
+        lineN--;
+    }
+    if (carN > 0) {
+        readCar(c, carFile, BIN, NO_OFFSET);
+        carN--;
+    }
+
+    // Starting merge loop
+    int nFound = 0;
+    int curr_l = getLineCodLinha(l), curr_c = getCarCodLinha(c);
+    do {
+        // Checking wheter both sides match
         if (curr_l == curr_c) {
+            // Printing results to stdin
             printCar(c, ch);
             printLine(l, lh);
             nFound++;
-
-            readCar(c, carFile, BIN, NO_OFFSET);
-            ci++;
-        } else if (curr_c > curr_l) {
-            updateLine(l, lineFile, BIN, NO_OFFSET);
-            li++;
-        } else {
-            readCar(c, carFile, BIN, NO_OFFSET);
-            ci++;
+            
+            // If there are still some cars, go to next one
+            if (carN > 0) {
+                readCar(c, carFile, BIN, NO_OFFSET);
+                carN--;
+            }
         }
+        // Read a new line If: 
+        // lineN still has valid entries and lines' side has a lower codLinha
+        // OR if there are no more cars, while there are still some lines
+        else if ((lineN > 0 && (curr_l < curr_c)) || (!carN && lineN)) {
+            updateLine(l, lineFile, BIN, NO_OFFSET);
+            lineN--;
+        } 
+        // If no other condition was met and cars are not empty, read a car
+        else if (carN > 0) {
+            readCar(c, carFile, BIN, NO_OFFSET);
+            carN--;            
+        }
+
+        curr_l = getLineCodLinha(l);
+        curr_c = getCarCodLinha(c);
+    } while (carN > 0 || lineN > 0);
+
+    // Checking last one on memory
+    if (curr_l == curr_c) {
+        printCar(c, ch);
+        printLine(l, lh);
+        nFound++;
     }
 
     return nFound;
