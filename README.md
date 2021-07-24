@@ -1,5 +1,5 @@
 # trabalho_arquivos3
 - Merges/Joins e Ordenação
-## Grupo
-- Gustavo Brunelli
-- João Guilherme J. Marinho
+### Trabalho desenvolvido pelos alunos do Grupo 16:
+- Gustavo Henrique Brunelli | NUSP: 11801053
+- João Guilherme Jarochinski Marinho | NUSP: 10698193
